@@ -1,0 +1,237 @@
+:root {
+    --primary-backround: #272828;
+    --primary-background-dark: #22201b;
+    --secondary: #4cc2ff;
+    --card-bg: #323232;
+    --card-bg-light: #3e3e3e;
+    --muted: #b8b8b8;
+}
+
+body {
+    background-color: var(--primary-backround);
+    color: white;
+    user-select: none;
+}
+
+.main {
+    padding: 10px;
+    width: 100%;
+
+}
+
+.sidebar {
+    background-color: var(--primary-background-dark);
+    min-height: 100vh;
+    padding: 10px;
+}
+
+.sidebar-nav {
+    gap: 12px;
+}
+
+
+.sidebar-nav button {
+    padding: 7px 0;
+    background-color: transparent;
+    border: none;
+    color: white;
+    width: 250px;
+    padding: 10px;
+    display: flex;
+    transition: 300ms;
+    align-items: center;
+    border-radius: 7px;
+}
+
+.sidebar-nav button:hover {
+    background-color: var(--primary-backround);
+}
+
+.sidebar-nav button span:nth-child(2) {
+    margin-left: 12px;
+}
+
+.secondary-btn {
+    padding: 7px;
+    border: none;
+    display: flex;
+    transition: 300ms;
+    border-radius: 7px;
+    background-color: var(--secondary);
+    align-items: center;
+}
+
+.nav-active {
+    background-color: var(--card-bg) !important;
+}
+
+.focus-sessions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.-card {
+    padding: 20px;
+    display: inline-block;
+    background-color: var(--card-bg);
+    border-radius: 7px;
+    transition: 0.5s;
+    box-shadow: var(--primary-background-dark) 0 0 5px 1px;
+}
+
+.session-duration {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-width: 0 0 2px 0;
+    border-radius: 7px;
+    border-color: var(--muted);
+    border-style: solid;
+    background-color: var(--card-bg-light);
+}
+
+.remaining-time {
+    width: 200px;
+    height: 200px;
+    background-color: var(--card-bg-light);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    border-color: var(--muted);
+    border: 1px solid;
+}
+
+.total-time {
+    width: 200px;
+    height: 200px;
+    background-color: var(--card-bg-light);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    border-color: var(--muted);
+    border: 1px solid;
+}
+
+#session-running {
+    padding: 25px 50px;
+}
+
+.session-duration input {
+    width: 100px;
+    outline: none;
+    color: white;
+    text-align: center;
+    background-color: transparent;
+    border: none;
+    font-size: 3rem;
+}
+
+input[type='checkbox'] {
+    -webkit-appearance: none;
+    background-color: var(--card-bg-light);
+    outline: none;
+    width: 1.15rem;
+    display: grid;
+    place-content: center;
+    border-color: var(--muted);
+    border: 0.1em solid var(--muted);
+    border-radius: 4px;
+    height: 1.15rem;
+}
+
+input[type='checkbox']::before {
+    content: '';
+    width: 0.65em;
+    border-radius: 2px;
+    height: 0.65em;
+    background-color: var(--secondary);
+    transform: scale(0);
+}
+
+input[type="checkbox"]:checked::before {
+    transform: scale(1);
+}
+
+.session-duration input::-webkit-outer-spin-button,
+.session-duration input::-webkit-inner-spin-button,
+.timer-time input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.muted {
+    color: var(--muted);
+}
+
+.tab-animation {
+    animation-name: tab-ani;
+    animation-duration: 0.3s;
+    animation-iteration-count: 1;
+}
+
+
+.timer-time {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    font-size: 2rem;
+    color: var(--muted);
+}
+
+.timer input {
+    width: 100px;
+    outline: none;
+    color: white;
+    text-align: center;
+    background-color: var(--card-bg-light);
+    border: none;
+    border-radius: 7px;
+    outline: none;
+    font-size: 3rem;
+}
+
+.timer-remaining {
+    font-size: 4rem;
+    font-weight: 300;
+    display: flex;
+    gap: 7px;
+}
+
+@keyframes tab-ani {
+    0% {
+        opacity: 0;
+        margin-top: 50px;
+    }
+
+    100% {
+        opacity: 1;
+        margin-top: initial;
+    }
+}
+
+@media screen and (max-width: 726px) {
+    .sidebar-nav button .btn-label {
+        display: none;
+    }
+
+    .sidebar-nav button span:first-child {
+        margin: 0;
+    }
+
+    .-card {
+        width: 100%;
+    }
+
+    .sidebar-nav button {
+        width: auto;
+    }
+
+    .timer input {
+        width: 70px;
+        font-size: 2rem;
+    }
+}
