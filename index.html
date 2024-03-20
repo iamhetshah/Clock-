@@ -16,13 +16,13 @@
     <div class="d-flex">
         <div class="sidebar">
             <div class="sidebar-nav d-flex flex-column">
-                <button id="mindfulnessBtn" class="">
+                <button id="mindfulnessBtn" class="nav-active">
                     <span class="material-symbols-outlined">
                         mindfulness
                     </span>
                     <span class="btn-label">Focus Sessions</span>
                 </button>
-                <button class="nav-active" id="hourglassBtn">
+                <button class="" id="hourglassBtn">
                     <span class="material-symbols-outlined">
                         hourglass
                     </span>
@@ -43,7 +43,7 @@
             </div>
         </div>
         <div class="main d-md-flex justify-content-center align-items-center">
-            <div class="d-none focus-sessions tab-animation" id="focus-sessions">
+            <div class="focus-sessions tab-animation" id="focus-sessions">
                 <div class="-card">
                     <div id="set-focus-session" class="d-flex justify-content-center align-items-center flex-column">
                         <span style="font-size: 1.5rem;">Get ready to focus</span>
@@ -112,7 +112,7 @@
                     </div>
                 </div>
             </div>
-            <div class="timer tab-animation" id="timer">
+            <div class="d-none timer tab-animation" id="timer">
                 <div id="timer-edit" class="-card set-timer d-flex flex-column align-items-center">
                     <p class="h4 text-center p-0 m-0">Timer</p>
                     <br>
@@ -149,7 +149,33 @@
                 <div class="-card">Alarm Feature</div>
             </div>
             <div class="d-none stopwatch tab-animation" id="stopwatch">
-                <div class="-card">Stopwatch Feature</div>
+                <div class="-card">
+                    <div class="stopwatch-controls">
+                        <div class="stopwatch-time-elapsed w-100 d-flex flex-column">
+                            <div class="stopwatch-time-elapsed justify-content-center">
+                                <span id="stopwatch-hour-elapsed">00</span>:
+                                <span id="stopwatch-minute-elapsed">00</span>:
+                                <span id="stopwatch-second-elapsed">00</span>.
+                                <span id="stopwatch-milisecond-elapsed">00</span>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-center my-2 align-items-center">
+                            <button class="secondary-btn rounded-circle m-2" id="pause-stopwatch">
+                                <span class="material-symbols-outlined">play_arrow</span>
+                            </button>
+                            <button class="d-none secondary-btn rounded-circle m-2" id="stop-stopwatch">
+                                <span class="material-symbols-outlined">stop</span>
+                            </button>
+                        </div>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <button class="secondary-btn w-100 my-3 d-none justify-content-center" id="add-stamp">
+                                <span class="material-symbols-outlined text-center">add</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="stopwatch-timestamps" id="sw-timestamps">
+                    </div>
+                </div>
             </div>
         </div>
     </div>

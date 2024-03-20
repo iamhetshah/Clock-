@@ -137,6 +137,20 @@ const dom = {
       },
     },
   },
+  stopwatchTab: {
+    hoursElapsedDOM: document.getElementById("stopwatch-hour-elapsed"),
+    minutesElapsedDOM: document.getElementById("stopwatch-minute-elapsed"),
+    secondsElapsedDOM: document.getElementById("stopwatch-second-elapsed"),
+    miliSecondsElapsedDOM: document.getElementById(
+      "stopwatch-milisecond-elapsed"
+    ),
+    controls: {
+      stopBtn: document.getElementById("stop-stopwatch"),
+      pauseBtn: document.getElementById("pause-stopwatch"),
+      addStampBtn: document.getElementById("add-stamp"),
+    },
+    timestamps: document.getElementById("sw-timestamps"),
+  },
 };
 
 // this is an object which runs the 'focus session' feature
@@ -207,6 +221,7 @@ const focusSession = {
   },
 };
 
+// object which runs the 'timer' feature
 const timer = {
   remainingTime: 0,
   paused: false,
@@ -235,6 +250,62 @@ const timer = {
     this.remainingTime = 0;
     this.paused = false;
     clearInterval(this.interval);
+  },
+};
+
+// object which runs the 'stopwatch' feature
+const stopwatch = {
+  millisecondsElapsed: 0,
+  interval: null,
+  paused: true,
+  timestamps: [],
+  stopped: true,
+
+  stopTimer() {
+    clearInterval(this.interval);
+    this.millisecondsElapsed = 0;
+    this.paused = true;
+    this.stopped = true;
+  },
+
+  addStamp() {
+    let [hours, minutes, seconds, milliseconds] = convertMillisecondsToHMSMs(
+      stopwatch.millisecondsElapsed
+    );
+    const stamp = hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+    this.timestamps.push(stamp);
+    dom.stopwatchTab.timestamps.innerHTML =
+      '<div class="timestamp"><span>' +
+      this.timestamps.length.toString().padStart(2, "0") +
+      "</span><span>" +
+      stamp +
+      "</span></div>" +
+      dom.stopwatchTab.timestamps.innerHTML;
+  },
+
+  startTimer() {
+    this.stopped = false;
+    this.paused = false;
+
+    this.interval = setInterval(this.timer0, 10);
+  },
+
+  pauseTimer() {
+    this.paused = true;
+    clearInterval(this.interval);
+  },
+
+  timer0() {
+    if (!stopwatch.paused) {
+      stopwatch.millisecondsElapsed += 10;
+      let [hours, minutes, seconds, milliseconds] = convertMillisecondsToHMSMs(
+        stopwatch.millisecondsElapsed
+      );
+      dom.stopwatchTab.hoursElapsedDOM.innerHTML = hours;
+      dom.stopwatchTab.minutesElapsedDOM.innerHTML = minutes;
+      dom.stopwatchTab.secondsElapsedDOM.innerHTML = seconds;
+      dom.stopwatchTab.miliSecondsElapsedDOM.innerHTML = milliseconds;
+    }
   },
 };
 
@@ -269,7 +340,27 @@ const convertSecondsToHMS = (totalSeconds) => {
 
   return [`${formattedHours}`, `${formattedMinutes}`, `${formattedSeconds}`];
 };
+const convertMillisecondsToHMSMs = (totalMilliseconds) => {
+  const milliseconds = totalMilliseconds % 1000;
+  const seconds = Math.floor((totalMilliseconds / 1000) % 60);
+  const minutes = Math.floor((totalMilliseconds / (1000 * 60)) % 60);
+  const hours = Math.floor((totalMilliseconds / (1000 * 3600)) % 24);
 
+  const formattedHours = hours.toString().padStart(2, "0");
+  const formattedMinutes = minutes.toString().padStart(2, "0");
+  const formattedSeconds = seconds.toString().padStart(2, "0");
+  const formattedMilliseconds = milliseconds
+    .toString()
+    .padStart(2, "0")
+    .substring(0, 2);
+
+  return [
+    formattedHours,
+    formattedMinutes,
+    formattedSeconds,
+    formattedMilliseconds,
+  ];
+};
 // set event handlers
 {
   {
@@ -402,6 +493,46 @@ const convertSecondsToHMS = (totalSeconds) => {
         dom.timerTab.running.pauseBtn.innerHTML =
           '<span class="material-symbols-outlined">play_arrow</span>';
       }
+    };
+  }
+  {
+    // for stopwatch
+    dom.stopwatchTab.controls.pauseBtn.onclick = (e) => {
+      if (stopwatch.stopped) {
+        e.target.innerHTML =
+          '<span class="material-symbols-outlined">pause</span>';
+        dom.stopwatchTab.controls.addStampBtn.classList.remove("d-none");
+        dom.stopwatchTab.controls.addStampBtn.classList.add("d-flex");
+        dom.stopwatchTab.controls.stopBtn.classList.remove("d-none");
+        dom.stopwatchTab.controls.stopBtn.classList.add("d-flex");
+        stopwatch.startTimer();
+        stopwatch.timestamps = [];
+        dom.stopwatchTab.timestamps.innerHTML = "";
+      } else {
+        if (stopwatch.paused) {
+          e.target.innerHTML =
+            '<span class="material-symbols-outlined">pause</span>';
+          stopwatch.startTimer();
+        } else {
+          e.target.innerHTML =
+            '<span class="material-symbols-outlined">play_arrow</span>';
+          stopwatch.pauseTimer();
+        }
+      }
+    };
+
+    dom.stopwatchTab.controls.stopBtn.onclick = (e) => {
+      stopwatch.stopTimer();
+      dom.stopwatchTab.controls.addStampBtn.classList.add("d-none");
+      dom.stopwatchTab.controls.addStampBtn.classList.remove("d-flex");
+      dom.stopwatchTab.controls.stopBtn.classList.add("d-none");
+      dom.stopwatchTab.controls.stopBtn.classList.remove("d-flex");
+      dom.stopwatchTab.controls.pauseBtn.innerHTML =
+        '<span class="material-symbols-outlined">play_arrow</span>';
+    };
+
+    dom.stopwatchTab.controls.addStampBtn.onclick = () => {
+      stopwatch.addStamp();
     };
   }
 }
