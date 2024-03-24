@@ -47,12 +47,12 @@
                 <div class="-card">
                     <div id="set-focus-session" class="d-flex justify-content-center align-items-center flex-column">
                         <span style="font-size: 1.5rem;">Get ready to focus</span>
-                        <span class="my-2 mb-4 muted" style="font-size: 0.8rem;">For longer sessions,
+                        <p class="my-2 mb-4 muted text-center" style="font-size: 0.8rem;">For longer sessions,
                             we'll add
                             short
                             break
                             so you can
-                            recharge.</span>
+                            recharge.</p>
                         <div class="session-duration m-2">
                             <input type="number" value="120" id="session-duration">
                             <span class="muted my-1">mins</span>
@@ -146,7 +146,43 @@
                 </div>
             </div>
             <div class="d-none alarm tab-animation" id="alarm">
-                <div class="-card">Alarm Feature</div>
+                <div class="-card d-flex  flex-column align-items-center">
+                    <p class="h4 text-center p-0 m-0">Add Alarm</p>
+                    <br>
+                    <div class="alarm-set">
+                        <input type="number" id="alarm-hour" placeholder="00">
+                        :
+                        <input type="number" id="alarm-minute" placeholder="00">
+                    </div>
+                    <p class="m-4 muted text-center" style="font-size: 0.8rem;">in 24 hours format</p>
+                    <div class="alarm-days-controls w-100">
+                        <button class="d-flex justify-content-center align-items-center"
+                            id="alarm-set-everyday">Repeat</button>
+                        <button class="d-flex active justify-content-center align-items-center"
+                            id="alarm-set-once">Once</button>
+                    </div>
+                    <div class="alarm-set-days my-2 w-100 d-none justify-content-center" id="alarmDaysWrap">
+                        <div role="button" onclick="selectDay(this)" data-selected="false" name="day" class="day">S
+                        </div>
+                        <div role="button" onclick="selectDay(this)" data-selected="false" name="day" class="day">M
+                        </div>
+                        <div role="button" onclick="selectDay(this)" data-selected="false" name="day" class="day">T
+                        </div>
+                        <div role="button" onclick="selectDay(this)" data-selected="false" name="day" class="day">W
+                        </div>
+                        <div role="button" onclick="selectDay(this)" data-selected="false" name="day" class="day">T
+                        </div>
+                        <div role="button" onclick="selectDay(this)" data-selected="false" name="day" class="day">F
+                        </div>
+                        <div role="button" onclick="selectDay(this)" data-selected="false" name="day" class="day">S
+                        </div>
+                    </div>
+                    <br>
+                    <button class="secondary-btn w-100 d-flex justify-content-center align-items-center"
+                        id="add-alarm"><span class="material-symbols-outlined">
+                            add
+                        </span></button>
+                </div>
             </div>
             <div class="d-none stopwatch tab-animation" id="stopwatch">
                 <div class="-card">

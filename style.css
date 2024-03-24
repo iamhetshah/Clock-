@@ -131,7 +131,7 @@ body {
     font-size: 3rem;
 }
 
-input[type='checkbox'] {
+.focus-sessions input[type='checkbox'] {
     -webkit-appearance: none;
     background-color: var(--card-bg-light);
     outline: none;
@@ -144,7 +144,7 @@ input[type='checkbox'] {
     height: 1.15rem;
 }
 
-input[type='checkbox']::before {
+.focus-sessions input[type='checkbox']::before {
     content: '';
     width: 0.65em;
     border-radius: 2px;
@@ -153,13 +153,14 @@ input[type='checkbox']::before {
     transform: scale(0);
 }
 
-input[type="checkbox"]:checked::before {
+.focus-sessions input[type="checkbox"]:checked::before {
     transform: scale(1);
 }
 
 .session-duration input::-webkit-outer-spin-button,
 .session-duration input::-webkit-inner-spin-button,
-.timer-time input::-webkit-inner-spin-button {
+.timer-time input::-webkit-inner-spin-button,
+.alarm-set input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
@@ -175,16 +176,23 @@ input[type="checkbox"]:checked::before {
 }
 
 
-.timer-time {
+.timer-time,
+.alarm-set {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
     font-weight: bold;
     font-size: 2rem;
     color: var(--muted);
 }
 
-.timer input {
+.alarm-set {
+    min-width: 350px;
+}
+
+.timer input,
+.alarm-set input {
     width: 100px;
     outline: none;
     color: white;
@@ -194,6 +202,77 @@ input[type="checkbox"]:checked::before {
     border-radius: 7px;
     outline: none;
     font-size: 3rem;
+}
+
+.alarm-set-days {
+    display: flex;
+    gap: 7px;
+    background-color: var(--card-bg-light);
+    padding: 7px;
+    border-radius: 7px;
+}
+
+.alarm-set-days .day {
+    padding: 20px;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    background-color: var(--primary-backround);
+    display: flex;
+    font-weight: 600;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+
+
+.alarm-set-days div[data-selected='true'] {
+    background-color: var(--secondary);
+    color: var(--primary-background-dark);
+}
+
+.alarm-days-controls {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 7px;
+}
+
+.alarm-days-controls button {
+    font-weight: 500;
+    border: none;
+    border-radius: 7px;
+    background-color: var(--card-bg-light);
+    color: white;
+    padding: 10px;
+    width: 100%;
+    transition: 0.3s;
+}
+
+.alarm-days-controls .active {
+    background-color: var(--secondary);
+    color: var(--primary-background-dark);
+}
+
+
+.alarm-days-controls .active::before {
+    content: url('check-mark.svg');
+    width: 10px;
+    display: inline-block;
+    margin-right: 10px;
+    animation-name: active-ani;
+    animation-duration: 1s;
+    animation-iteration-count: 1;
+}
+
+@keyframes active-ani {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .timer-remaining,
@@ -280,7 +359,8 @@ input[type="checkbox"]:checked::before {
         width: auto;
     }
 
-    .timer input {
+    .timer input,
+    .alarm-set input {
         width: 70px;
         font-size: 2rem;
     }

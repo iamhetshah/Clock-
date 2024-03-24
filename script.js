@@ -137,6 +137,7 @@ const dom = {
       },
     },
   },
+
   stopwatchTab: {
     hoursElapsedDOM: document.getElementById("stopwatch-hour-elapsed"),
     minutesElapsedDOM: document.getElementById("stopwatch-minute-elapsed"),
@@ -150,6 +151,18 @@ const dom = {
       addStampBtn: document.getElementById("add-stamp"),
     },
     timestamps: document.getElementById("sw-timestamps"),
+  },
+
+  alarmTab: {
+    edit: {
+      alarmHour: document.getElementById("alarm-hour"),
+      alarmMinute: document.getElementById("alarm-minute"),
+      alarmAddBtn: document.getElementById("add-alarm"),
+      alarmDays: document.getElementsByName("day"),
+      alarmDaysWrapper: document.getElementById("alarmDaysWrap"),
+      setEveryDayBtn: document.getElementById("alarm-set-everyday"),
+      setOnceBtn: document.getElementById("alarm-set-once"),
+    },
   },
 };
 
@@ -251,6 +264,10 @@ const timer = {
     this.paused = false;
     clearInterval(this.interval);
   },
+};
+
+const alarm = {
+  alarms: {},
 };
 
 // object which runs the 'stopwatch' feature
@@ -360,6 +377,14 @@ const convertMillisecondsToHMSMs = (totalMilliseconds) => {
     formattedSeconds,
     formattedMilliseconds,
   ];
+};
+const selectDay = (e) => {
+  const isSelected = e.getAttribute("data-selected");
+  if (isSelected === "false") {
+    e.setAttribute("data-selected", "true");
+  } else {
+    e.setAttribute("data-selected", "false");
+  }
 };
 // set event handlers
 {
@@ -533,6 +558,57 @@ const convertMillisecondsToHMSMs = (totalMilliseconds) => {
 
     dom.stopwatchTab.controls.addStampBtn.onclick = () => {
       stopwatch.addStamp();
+    };
+  }
+  {
+    // for alarms
+    dom.alarmTab.edit.alarmHour.oninput = (e) => {
+      const i = e.target.value;
+      if (i > 23) {
+        e.target.value = 23;
+      } else if (i < 0) {
+        e.target.value = 0;
+      }
+    };
+
+    dom.alarmTab.edit.alarmMinute.oninput = (e) => {
+      const i = e.target.value;
+      if (i > 59) {
+        e.target.value = 59;
+      } else if (i < 0) {
+        e.target.value = 0;
+      }
+    };
+
+    dom.alarmTab.edit.setEveryDayBtn.onclick = (ele) => {
+      dom.alarmTab.edit.alarmDaysWrapper.classList.add("d-flex");
+      dom.alarmTab.edit.alarmDaysWrapper.classList.remove("d-none");
+      dom.alarmTab.edit.setOnceBtn.classList.remove("active");
+      ele.target.classList.add("active");
+    };
+
+    dom.alarmTab.edit.setOnceBtn.onclick = (e) => {
+      e.target.classList.add("active");
+      dom.alarmTab.edit.setEveryDayBtn.classList.remove("active");
+      dom.alarmTab.edit.alarmDaysWrapper.classList.add("d-none");
+      dom.alarmTab.edit.alarmDaysWrapper.classList.remove("d-flex");
+      // const crrDate = new Date();
+      // let offset = 0;
+      // if (
+      //   crrDate.getHours() > parseInt(dom.alarmTab.edit.alarmHour.value) ||
+      //   crrDate.getMinutes() > parseInt(dom.alarmTab.edit.alarmMinute.value)
+      // ) {
+      //   offset = 1;
+      // }
+
+      // const days = dom.alarmTab.edit.alarmDays;
+      // for (let d = 0; d < days.length; d++) {
+      //   if (d === (new Date().getDay() + offset) % 7) {
+      //     days[d].setAttribute("data-selected", "true");
+      //   } else {
+      //     days[d].setAttribute("data-selected", "false");
+      //   }
+      // }
     };
   }
 }
