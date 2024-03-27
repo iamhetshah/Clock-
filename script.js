@@ -1,6 +1,28 @@
-// this is an object used to access all required dom elements which needs to be updated
-const sound = new Audio();
+const sound = {
+  audio: new Audio(),
+  isAlarmRinging: false,
 
+  alarmRing() {
+    this.audio.pause();
+    this.audio.src = "alarm.wav";
+    this.audio.play();
+    this.audio.loop = true;
+  },
+
+  normalRing() {
+    this.audio.pause();
+    this.audio.src = "focus-session-end.mp3";
+    this.audio.load();
+    this.audio.loop = false;
+    this.audio.play();
+  },
+
+  stopSound() {
+    this.audio.pause();
+  },
+};
+
+// this is an object used to access all required dom elements which needs to be updated
 const dom = {
   nav: {
     mindfulnessBtn: document.getElementById("mindfulnessBtn"),
@@ -158,11 +180,12 @@ const dom = {
       alarmHour: document.getElementById("alarm-hour"),
       alarmMinute: document.getElementById("alarm-minute"),
       alarmAddBtn: document.getElementById("add-alarm"),
-      alarmDays: document.getElementsByName("day"),
-      alarmDaysWrapper: document.getElementById("alarmDaysWrap"),
-      setEveryDayBtn: document.getElementById("alarm-set-everyday"),
-      setOnceBtn: document.getElementById("alarm-set-once"),
+      // alarmDays: document.getElementsByName("day"),
+      // alarmDaysWrapper: document.getElementById("alarmDaysWrap"),
+      // setEveryDayBtn: document.getElementById("alarm-set-everyday"),
+      // setOnceBtn: document.getElementById("alarm-set-once"),
     },
+    alarmsList: document.getElementById("alarms-list"),
   },
 };
 
@@ -214,8 +237,7 @@ const focusSession = {
           this.sessionTimeRemaining / 60
         );
         if (this.sessionTimeRemaining <= 0) {
-          sound.src = "/focus-session-end.mp3";
-          sound.play();
+          sound.normalRing();
           this.stopSession();
         }
       }
@@ -253,8 +275,7 @@ const timer = {
 
       if (this.remainingTime <= 0) {
         this.stopTimer();
-        sound.src = "/focus-session-end.mp3";
-        sound.play();
+        sound.normalRing();
         dom.timerTab.edit.show();
       }
     }, 1000);
@@ -267,7 +288,115 @@ const timer = {
 };
 
 const alarm = {
+  // id: {
+  //   ringing: Boolean,
+  //   hours: Number,
+  //   minutes: Number,
+  // },
   alarms: {},
+  idCount: 1,
+  ringing: false,
+  interval: null,
+  addAlarm(hours, minutes) {
+    const id = this.idCount++;
+    const alarm = {
+      hours: hours,
+      minutes: minutes,
+    };
+
+    this.alarms[id] = alarm;
+
+    if (this.interval === null) {
+      this.interval = setInterval(this.checkAlarms, 1000);
+    }
+
+    const [hoursRemaining, minutesRemaining] = calculateDiff(hours, minutes);
+
+    if (hoursRemaining === 0 && minutesRemaining === 0) {
+      $(dom.alarmTab.alarmsList).append(
+        `<div class="an-alarm" data-alarm-id="${id}">
+        <div>
+            <p class="alarm-list-time">${hours
+              .toString()
+              .padStart(2, "0")}:${minutes.toString().padStart(2, "0")}</p>
+            <span class="alarm-time-remaining muted">Ringing...</span>
+        </div>
+        <div>
+            <button type="button" class="secondary-btn" onclick='removeAlarmDOM(${id})'>
+                <span class="material-symbols-outlined">delete</span>
+            </button>
+        </div>
+    </div>`
+      );
+    } else {
+      $(dom.alarmTab.alarmsList).append(
+        `<div class="an-alarm" data-alarm-id="${id}">
+        <div>
+            <p class="alarm-list-time">${hours
+              .toString()
+              .padStart(2, "0")}:${minutes.toString().padStart(2, "0")}</p>
+            <span class="alarm-time-remaining muted">Ring in ${
+              hoursRemaining !== 0 ? hoursRemaining + " hours " : ""
+            } ${
+          minutesRemaining !== 0 ? minutesRemaining + " minutes " : ""
+        }</span>
+        </div>
+        <div>
+            <button type="button" class="secondary-btn" onclick='removeAlarmDOM(${id})'>
+                <span class="material-symbols-outlined">delete</span>
+            </button>
+        </div>
+    </div>`
+      );
+    }
+  },
+  removeAlarm(id) {
+    if (this.alarms[id]) {
+      delete this.alarms[id];
+      if (this.ringing) {
+        sound.stopSound();
+        this.ringing = false;
+      }
+      $(`.an-alarm[data-alarm-id='${id}']`).remove();
+    }
+  },
+  checkAlarms() {
+    const d = new Date();
+    for (let key in alarm.alarms) {
+      {
+        const [hoursRemaining, minutesRemaining] = calculateDiff(
+          alarm.alarms[key].hours,
+          alarm.alarms[key].minutes
+        );
+        if (hoursRemaining === 0 && minutesRemaining === 0) {
+          $(`.an-alarm[data-alarm-id='${key}'] .alarm-time-remaining`).html(
+            `Ringing...`
+          );
+        } else {
+          $(`.an-alarm[data-alarm-id='${key}'] .alarm-time-remaining`).html(
+            `Ring in ${
+              hoursRemaining !== 0 ? hoursRemaining + " hours " : ""
+            } ${minutesRemaining !== 0 ? minutesRemaining + " minutes " : ""}`
+          );
+        }
+      }
+      if (
+        d.getHours() === alarm.alarms[key].hours &&
+        d.getMinutes() === alarm.alarms[key].minutes
+      ) {
+        alarm.ringing = true;
+      } else {
+        alarm.ringing = false || alarm.ringing;
+      }
+    }
+    if (alarm.ringing) {
+      sound.alarmRing();
+    } else {
+      sound.stopSound();
+    }
+
+    alarm.ringing = false;
+  },
 };
 
 // object which runs the 'stopwatch' feature
@@ -291,13 +420,13 @@ const stopwatch = {
     );
     const stamp = hours + ":" + minutes + ":" + seconds + "." + milliseconds;
     this.timestamps.push(stamp);
-    dom.stopwatchTab.timestamps.innerHTML =
+    $(dom.stopwatchTab.timestamps).prepend(
       '<div class="timestamp"><span>' +
-      this.timestamps.length.toString().padStart(2, "0") +
-      "</span><span>" +
-      stamp +
-      "</span></div>" +
-      dom.stopwatchTab.timestamps.innerHTML;
+        this.timestamps.length.toString().padStart(2, "0") +
+        "</span><span>" +
+        stamp +
+        "</span></div>"
+    );
   },
 
   startTimer() {
@@ -326,7 +455,7 @@ const stopwatch = {
   },
 };
 
-// some common functions
+// some util functions
 const updateBreaksOnDOM = () => {
   let i = dom.focusSessionsTab.edit.sessionDurationInput.value;
   if (i < 0) {
@@ -378,14 +507,30 @@ const convertMillisecondsToHMSMs = (totalMilliseconds) => {
     formattedMilliseconds,
   ];
 };
-const selectDay = (e) => {
-  const isSelected = e.getAttribute("data-selected");
-  if (isSelected === "false") {
-    e.setAttribute("data-selected", "true");
-  } else {
-    e.setAttribute("data-selected", "false");
+const calculateDiff = (hours, minutes) => {
+  const now = new Date();
+  const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes();
+  const providedTimeInMinutes = hours * 60 + minutes;
+  let diffInMinutes = providedTimeInMinutes - currentTimeInMinutes;
+  if (diffInMinutes < 0) {
+    diffInMinutes += 24 * 60;
   }
+  const remainingHours = Math.floor(diffInMinutes / 60);
+  const remainingMinutes = diffInMinutes % 60;
+  return [remainingHours, remainingMinutes];
 };
+
+const removeAlarmDOM = (id) => {
+  alarm.removeAlarm(id);
+};
+// const selectDay = (e) => {
+//   const isSelected = e.getAttribute("data-selected");
+//   if (isSelected === "false") {
+//     e.setAttribute("data-selected", "true");
+//   } else {
+//     e.setAttribute("data-selected", "false");
+//   }
+// };
 // set event handlers
 {
   {
@@ -492,7 +637,6 @@ const selectDay = (e) => {
         seconds = 0;
       }
       const totalSecond = hours * 60 * 60 + minutes * 60 + seconds;
-      console.log(hours, minutes, seconds);
       if (totalSecond > 0) {
         let [_hours, _minutes, _seconds] = convertSecondsToHMS(totalSecond);
         dom.timerTab.running.hour.innerHTML = _hours;
@@ -580,35 +724,41 @@ const selectDay = (e) => {
       }
     };
 
-    dom.alarmTab.edit.setEveryDayBtn.onclick = (ele) => {
-      dom.alarmTab.edit.alarmDaysWrapper.classList.add("d-flex");
-      dom.alarmTab.edit.alarmDaysWrapper.classList.remove("d-none");
-      dom.alarmTab.edit.setOnceBtn.classList.remove("active");
-      ele.target.classList.add("active");
-    };
+    // dom.alarmTab.edit.setEveryDayBtn.onclick = (ele) => {
+    //   dom.alarmTab.edit.alarmDaysWrapper.classList.add("d-flex");
+    //   dom.alarmTab.edit.alarmDaysWrapper.classList.remove("d-none");
+    //   dom.alarmTab.edit.setOnceBtn.classList.remove("active");
+    //   ele.target.classList.add("active");
+    // };
 
-    dom.alarmTab.edit.setOnceBtn.onclick = (e) => {
-      e.target.classList.add("active");
-      dom.alarmTab.edit.setEveryDayBtn.classList.remove("active");
-      dom.alarmTab.edit.alarmDaysWrapper.classList.add("d-none");
-      dom.alarmTab.edit.alarmDaysWrapper.classList.remove("d-flex");
-      // const crrDate = new Date();
-      // let offset = 0;
-      // if (
-      //   crrDate.getHours() > parseInt(dom.alarmTab.edit.alarmHour.value) ||
-      //   crrDate.getMinutes() > parseInt(dom.alarmTab.edit.alarmMinute.value)
-      // ) {
-      //   offset = 1;
-      // }
+    // dom.alarmTab.edit.setOnceBtn.onclick = (e) => {
+    // e.target.classList.add("active");
+    // dom.alarmTab.edit.setEveryDayBtn.classList.remove("active");
+    // dom.alarmTab.edit.alarmDaysWrapper.classList.add("d-none");
+    // dom.alarmTab.edit.alarmDaysWrapper.classList.remove("d-flex");
+    // const crrDate = new Date();
+    // let offset = 0;
+    // if (
+    //   crrDate.getHours() > parseInt(dom.alarmTab.edit.alarmHour.value) ||
+    //   crrDate.getMinutes() > parseInt(dom.alarmTab.edit.alarmMinute.value)
+    // ) {
+    //   offset = 1;
+    // }
+    // const days = dom.alarmTab.edit.alarmDays;
+    // for (let d = 0; d < days.length; d++) {
+    //   if (d === (new Date().getDay() + offset) % 7) {
+    //     days[d].setAttribute("data-selected", "true");
+    //   } else {
+    //     days[d].setAttribute("data-selected", "false");
+    //   }
+    // }
+    // };
 
-      // const days = dom.alarmTab.edit.alarmDays;
-      // for (let d = 0; d < days.length; d++) {
-      //   if (d === (new Date().getDay() + offset) % 7) {
-      //     days[d].setAttribute("data-selected", "true");
-      //   } else {
-      //     days[d].setAttribute("data-selected", "false");
-      //   }
-      // }
+    dom.alarmTab.edit.alarmAddBtn.onclick = () => {
+      const hours = dom.alarmTab.edit.alarmHour.value;
+      const minutes = dom.alarmTab.edit.alarmMinute.value;
+
+      alarm.addAlarm(parseInt(hours), parseInt(minutes));
     };
   }
 }

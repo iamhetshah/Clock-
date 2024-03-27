@@ -155,13 +155,13 @@
                         <input type="number" id="alarm-minute" placeholder="00">
                     </div>
                     <p class="m-4 muted text-center" style="font-size: 0.8rem;">in 24 hours format</p>
-                    <div class="alarm-days-controls w-100">
+                    <!-- <div class="alarm-days-controls w-100">
                         <button class="d-flex justify-content-center align-items-center"
                             id="alarm-set-everyday">Repeat</button>
                         <button class="d-flex active justify-content-center align-items-center"
                             id="alarm-set-once">Once</button>
-                    </div>
-                    <div class="alarm-set-days my-2 w-100 d-none justify-content-center" id="alarmDaysWrap">
+                    </div> -->
+                    <!-- <div class="alarm-set-days my-2 w-100 d-none justify-content-center" id="alarmDaysWrap">
                         <div role="button" onclick="selectDay(this)" data-selected="false" name="day" class="day">S
                         </div>
                         <div role="button" onclick="selectDay(this)" data-selected="false" name="day" class="day">M
@@ -177,11 +177,24 @@
                         <div role="button" onclick="selectDay(this)" data-selected="false" name="day" class="day">S
                         </div>
                     </div>
-                    <br>
+                    <br> -->
                     <button class="secondary-btn w-100 d-flex justify-content-center align-items-center"
                         id="add-alarm"><span class="material-symbols-outlined">
                             add
                         </span></button>
+                    <div class="alarms-list w-100" id="alarms-list">
+                        <!-- <div class="an-alarm" data-alarm-id="1">
+                            <div>
+                                <p class="alarm-list-time">23:24</p>
+                                <span class="alarm-time-remaining muted">Ring in 3 hours 4 minutes</span>
+                            </div>
+                            <div>
+                                <button type="button" class="secondary-btn" onclick="removeAlarmDOM(1)">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
+                        </div> -->
+                    </div>
                 </div>
             </div>
             <div class="d-none stopwatch tab-animation" id="stopwatch">
@@ -216,10 +229,9 @@
         </div>
     </div>
 </body>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script src="script.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
-    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-    crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
     crossorigin="anonymous"></script>
