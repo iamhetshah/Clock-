@@ -755,9 +755,11 @@ const removeAlarmDOM = (id) => {
     // };
 
     dom.alarmTab.edit.alarmAddBtn.onclick = () => {
-      const hours = dom.alarmTab.edit.alarmHour.value;
-      const minutes = dom.alarmTab.edit.alarmMinute.value;
-
+      const hours = parseInt(dom.alarmTab.edit.alarmHour.value);
+      const minutes = parseInt(dom.alarmTab.edit.alarmMinute.value);
+      if (isNaN(hours) || isNaN(minutes)) {
+        return;
+      }
       alarm.addAlarm(parseInt(hours), parseInt(minutes));
     };
   }
